@@ -1,0 +1,63 @@
+name: project_lazada
+description: "A new Flutter project."
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  provider: ^6.1.2
+  badges: ^3.1.2
+  carousel_slider: ^5.0.0
+  path_provider: ^2.1.5
+  json_annotation: ^4.9.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^4.0.0
+
+flutter:
+  assets:
+    - assets/messages.json
+    - assets/images/banner1.png
+    - assets/images/banner2.webp
+    - assets/images/banner3.webp
+    - assets/images/home_icon.png
+    - assets/images/lazmall.png
+    - assets/images/lazlook.png
+    - assets/images/lazbeauty.png
+    - assets/images/lazmart.png
+    - assets/images/lazlive.png
+    - assets/images/lucky_egg.png
+    - assets/images/dana.png
+    - assets/images/ulasan_berhadiah.png
+    - assets/images/tiket.png
+    - assets/images/mulai_dari_1rb.png
+    - assets/images/banner4.png
+    - assets/images/icon_lazflash.png
+    - assets/images/icon_lazmall.png
+    - assets/images/icon_keranjang.png
+    - assets/images/icon_lazsubsidi.png
+    - assets/images/sandal.png
+    - assets/images/apple_icon.png
+    - assets/images/facebook_icon.png
+    - assets/images/google_icon.png
+    - assets/images/lazada_logo.png
+    - assets/images/lazada_logo2.png
+
+  # fonts:
+  #   - family: Poppins
+  #     fonts:
+  #       - asset: fonts/Poppins-Bold.ttf
+  #       - asset: fonts/Poppins-Bold.ttf
+
+  uses-material-design: true
