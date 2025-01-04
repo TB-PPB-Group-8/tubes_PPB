@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:project_lazada/firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
@@ -9,20 +10,15 @@ import 'screens/lazmall_screen.dart';
 import 'themes/app_theme.dart';
 import 'themes/theme_provider.dart';
 
-void main() async {
-  WidgetsFlutterBinding
-      .ensureInitialized(); // Pastikan widget diinisialisasi sebelum Firebase
-  await Firebase.initializeApp(
-    options: FirebaseOptions(
-        apiKey: "AIzaSyDZggSaehxXKhdlzGxT7Mn2Z8-k9Rb1i8A",
-        authDomain: "tubes-ppb-b319e.firebaseapp.com",
-        projectId: "tubes-ppb-b319e",
-        storageBucket: "tubes-ppb-b319e.firebasestorage.app",
-        messagingSenderId: "985030920269",
-        appId: "1:985030920269:web:ad01625dabb79a0f037404",
-        measurementId: "G-PJ3HLWYFZN"),
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeProvider(),
+      child: MyApp(),
+    ),
   );
-  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {

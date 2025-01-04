@@ -107,51 +107,58 @@ class _HomeScreenState extends State<HomeScreen> {
           _buildCarouselBanner(),
           SizedBox(height: 10),
           Padding(
-            padding: const EdgeInsets.all(
-                4.0), 
+            padding: const EdgeInsets.all(4.0),
             child: CategoryGrid(
-              crossAxisSpacing:
-                  8.0, 
-              mainAxisSpacing:
-                  8.0, 
+              crossAxisSpacing: 8.0,
+              mainAxisSpacing: 8.0,
             ),
           ),
           SizedBox(height: 20),
           _buildPromoSection(),
           SizedBox(height: 20),
-          _buildLazFlashSection(),
+          _buildLazFlashSection(context),
         ],
       ),
     );
   }
 
   Widget _buildCarouselBanner() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      child: CarouselSlider(
-        options: CarouselOptions(
-          height: 240,
-          autoPlay: true,
-          enlargeCenterPage: false,
-          viewportFraction: 1.0,
-        ),
-        items: banners.map((imagePath) {
-          return Builder(
-            builder: (BuildContext context) {
-              return Container(
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  image: DecorationImage(
-                    image: AssetImage(imagePath),
-                    fit: BoxFit.cover,
-                  ),
-                ),
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: CarouselSlider(
+            options: CarouselOptions(
+              height: MediaQuery.of(context).size.width * 0.5,
+              autoPlay: true,
+              enlargeCenterPage: false,
+              viewportFraction: 1.0,
+              clipBehavior: Clip.hardEdge,
+            ),
+            items: banners.map((imagePath) {
+              return Builder(
+                builder: (BuildContext context) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(imagePath),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
               );
-            },
-          );
-        }).toList(),
-      ),
+            }).toList(),
+          ),
+        );
+      },
     );
   }
 
@@ -261,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildLazFlashSection() {
+  Widget _buildLazFlashSection(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -270,7 +277,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 'LazFlash',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
@@ -281,8 +288,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     MaterialPageRoute(builder: (context) => LazMall()),
                   );
                 },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 16.0),
+                child: const Padding(
+                  padding: EdgeInsets.only(right: 16.0),
                   child: Text(
                     'Lainnya >',
                     style: TextStyle(fontSize: 14, color: Colors.black),
@@ -291,22 +298,25 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          SizedBox(height: 10),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              childAspectRatio: 3 / 4,
-            ),
-            itemCount: 10,
-            itemBuilder: (context, index) => Container(
-              width: 150,
-              height: 200,
-              child: ProductCard(),
-            ),
+          const SizedBox(height: 10),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              int crossAxisCount = constraints.maxWidth ~/ 180;
+              crossAxisCount = crossAxisCount < 2 ? 2 : crossAxisCount;
+
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: 3 / 4,
+                ),
+                itemCount: 10,
+                itemBuilder: (context, index) => ProductCard(),
+              );
+            },
           ),
         ],
       ),

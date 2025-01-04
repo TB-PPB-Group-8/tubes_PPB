@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore library
+import 'package:shared_preferences/shared_preferences.dart'; // SharedPreferences library
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -7,6 +9,55 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _isPasswordVisible = false;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  String? _errorMessage; // Variabel untuk menyimpan pesan error
+
+  Future<void> _login() async {
+    String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      setState(() {
+        _errorMessage = "Email dan Password tidak boleh kosong.";
+      });
+      return;
+    }
+
+    try {
+      // Query Firestore untuk mencocokkan email dan password
+      QuerySnapshot userSnapshot = await _firestore
+          .collection('user')
+          .where('email', isEqualTo: email)
+          .where('password', isEqualTo: password)
+          .get();
+
+      if (userSnapshot.docs.isNotEmpty) {
+        // Login berhasil
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString(
+            'email', email); // Simpan email ke SharedPreferences
+        print("Login berhasil! Email disimpan di SharedPreferences.");
+        setState(() {
+          _errorMessage = null; // Reset pesan error jika ada
+        });
+        Navigator.pushReplacementNamed(context, '/home'); // Navigasi ke Home
+      } else {
+        // Login gagal
+        setState(() {
+          _errorMessage = "Email atau Password salah.";
+        });
+      }
+    } catch (e) {
+      print("Error saat login: $e");
+      setState(() {
+        _errorMessage = "Terjadi kesalahan. Silakan coba lagi.";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,6 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
                 child: TextField(
+                  controller: _emailController,
                   decoration: InputDecoration(
                     hintText: "Enter your Email",
                     hintStyle: const TextStyle(color: Colors.grey),
@@ -102,6 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
                 child: TextField(
+                  controller: _passwordController,
                   obscureText: !_isPasswordVisible,
                   decoration: InputDecoration(
                     hintText: "********",
@@ -114,7 +167,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Colors.grey,
                       ),
                       onPressed: () {
-                        // Ketika ikon mata diklik, toggle status password
                         setState(() {
                           _isPasswordVisible = !_isPasswordVisible;
                         });
@@ -146,37 +198,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    "Forgot Password?",
-                    style: TextStyle(color: Colors.white),
-                  ),
+              const SizedBox(height: 20),
+              if (_errorMessage != null)
+                Text(
+                  _errorMessage!,
+                  style: TextStyle(color: Colors.red, fontSize: 14),
                 ),
-              ),
-              Row(
-                children: [
-                  Checkbox(value: false, onChanged: (value) {}),
-                  const Text(
-                    "Remember me",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               ElevatedButton(
-                onPressed: () {
-                  print("Navigating to Home...");
-                  try {
-                    Navigator.pushReplacementNamed(context, '/home');
-                    print("Navigation successful!");
-                  } catch (e) {
-                    print("Error during navigation: $e");
-                  }
-                },
+                onPressed: _login,
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
                   backgroundColor: Colors.red,
@@ -247,7 +277,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
             ],
           ),
         ),
