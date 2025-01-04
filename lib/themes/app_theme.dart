@@ -5,7 +5,8 @@ class AppTheme {
     brightness: Brightness.light,
     primarySwatch: Colors.pink,
     scaffoldBackgroundColor: Colors.white,
-    appBarTheme: AppBarTheme(backgroundColor: Colors.pink, foregroundColor: Colors.white),
+    appBarTheme: AppBarTheme(
+        backgroundColor: Colors.pink, foregroundColor: Colors.white),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       selectedItemColor: Colors.pink,
       unselectedItemColor: Colors.grey,
@@ -15,8 +16,9 @@ class AppTheme {
   static final darkTheme = ThemeData(
     brightness: Brightness.dark,
     primarySwatch: Colors.pink,
-    scaffoldBackgroundColor: Colors.black,
-    appBarTheme: AppBarTheme(backgroundColor: Colors.black, foregroundColor: Colors.white),
+    scaffoldBackgroundColor: Color(0x080904),
+    appBarTheme: AppBarTheme(
+        backgroundColor: Color(0x080904), foregroundColor: Colors.white),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       selectedItemColor: Colors.pink,
       unselectedItemColor: Colors.grey,

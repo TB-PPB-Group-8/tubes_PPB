@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.red[50],
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Row(
+              child: const Row(
                 children: [
                   Icon(Icons.search, color: Colors.red, size: 20),
                   SizedBox(width: 5),
@@ -171,14 +171,14 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 'Promo Pengguna Baru!',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               GestureDetector(
                 onTap: () {},
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 16.0),
+                child: const Padding(
+                  padding: EdgeInsets.only(right: 16.0),
                   child: Text(
                     'Lihat >',
                     style: TextStyle(fontSize: 14, color: Colors.black),
@@ -187,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
@@ -229,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: Colors.tealAccent,
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Text(
+                              child: const Text(
                                 'RP 20.000\nkhusus pengguna baru',
                                 style: TextStyle(
                                   color: Colors.black,
