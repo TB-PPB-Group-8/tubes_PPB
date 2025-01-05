@@ -47,8 +47,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
         'created_at': FieldValue.serverTimestamp(),
       });
 
-      // Navigate to the home screen or show success message
-      Navigator.pushReplacementNamed(context, '/home');
+      // Show success snackbar and navigate to login screen
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("Sign up berhasil"),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      Future.delayed(const Duration(seconds: 2), () {
+        Navigator.pushReplacementNamed(context, '/login');
+      });
     } catch (e) {
       print("Error during sign up: $e");
       _showError("Sign up failed. Please try again.");
@@ -56,20 +64,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _showError(String message) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Error"),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
-            ),
-          ],
-        );
-      },
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
     );
   }
 
