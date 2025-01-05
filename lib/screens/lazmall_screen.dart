@@ -40,15 +40,18 @@ class LazMall extends StatelessWidget {
                     Navigator.pop(context);
                   },
                 ),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(5),
-                  child: Image.asset(
-                    'assets/images/icon_lazflash.png',
-                    height: 50,
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: Image.asset(
+                      'assets/images/icon_lazflash.png',
+                      height: 50,
+                    ),
                   ),
                 ),
                 SizedBox(width: 8),
                 Expanded(
+                  flex: 2,
                   child: TextField(
                     decoration: InputDecoration(
                       hintText: 'Search...',
