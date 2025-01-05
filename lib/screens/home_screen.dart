@@ -56,7 +56,6 @@ class _HomeScreenState extends State<HomeScreen> {
       elevation: 0,
       centerTitle: false,
       title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
             icon: Icon(Icons.qr_code_scanner, size: 30, color: Colors.black),
@@ -163,108 +162,116 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildPromoSection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        double cardWidth = screenWidth * 0.4; // 40% dari lebar layar
+        double cardHeight = screenWidth * 0.5; // 50% dari lebar layar
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Promo Pengguna Baru!',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              GestureDetector(
-                onTap: () {},
-                child: const Padding(
-                  padding: EdgeInsets.only(right: 16.0),
-                  child: Text(
-                    'Lihat >',
-                    style: TextStyle(fontSize: 14, color: Colors.black),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Promo Pengguna Baru!',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: const Padding(
+                      padding: EdgeInsets.only(right: 16.0),
+                      child: Text(
+                        'Lihat >',
+                        style: TextStyle(fontSize: 14, color: Colors.black),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: List.generate(2, (index) {
-                if (index == 1) {
-                  return Row(
-                    children: [
-                      Padding(
+              const SizedBox(height: 10),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: List.generate(2, (index) {
+                    if (index == 1) {
+                      return Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: Container(
+                              width: cardWidth,
+                              height: cardHeight,
+                              child: ProductCard(),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            height: cardHeight,
+                            width: cardWidth,
+                            decoration: BoxDecoration(
+                              color: Colors.indigo,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  spreadRadius: 2,
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.tealAccent,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Text(
+                                    'RP 20.000\nkhusus pengguna baru',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                const SizedBox(height: 30),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    print("Ambil ditekan");
+                                  },
+                                  child: const Text("Ambil"),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      return Padding(
                         padding: const EdgeInsets.only(right: 10),
                         child: Container(
-                          width: 150,
-                          height: 200,
+                          width: cardWidth,
+                          height: cardHeight,
                           child: ProductCard(),
                         ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(10),
-                        height: 200,
-                        width: 150,
-                        decoration: BoxDecoration(
-                          color: Colors.indigo,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              spreadRadius: 2,
-                              blurRadius: 10,
-                              offset: Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.tealAccent,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Text(
-                                'RP 20.000\nkhusus pengguna baru',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            SizedBox(height: 30),
-                            ElevatedButton(
-                              onPressed: () {
-                                print("Ambil ditekan");
-                              },
-                              child: Text("Ambil"),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                } else {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: Container(
-                      width: 150,
-                      height: 200,
-                      child: ProductCard(),
-                    ),
-                  );
-                }
-              }),
-            ),
-          )
-        ],
-      ),
+                      );
+                    }
+                  }),
+                ),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 
