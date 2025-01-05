@@ -22,7 +22,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
   List<dynamic> _products = [];
-  List<dynamic> _filteredProducts = []; // Produk hasil pencarian
+  List<dynamic> _filteredProducts = [];
   bool _isLoading = true;
 
   final List<String> banners = [
@@ -44,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (response.statusCode == 200) {
         setState(() {
           _products = json.decode(response.body);
-          _filteredProducts = _products; // Awalnya tampilkan semua produk
+          _filteredProducts = _products;
           _isLoading = false;
         });
       } else {
@@ -71,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: HeaderWithIcons(
         themeProvider: themeProvider,
-        onSearch: _handleSearch, 
+        onSearch: _handleSearch,
       ),
       body: _screens[_currentIndex],
       bottomNavigationBar: CustomBottomNavigationBar(

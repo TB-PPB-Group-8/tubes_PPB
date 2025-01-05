@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
   final String label;
+  final TextStyle? labelStyle; 
   final TextEditingController controller;
   final String hintText;
   final bool isPassword;
@@ -15,6 +16,7 @@ class CustomTextField extends StatelessWidget {
     this.isPassword = false,
     this.isPasswordVisible = false,
     this.onTogglePassword,
+    this.labelStyle, 
     Key? key,
   }) : super(key: key);
 
@@ -23,7 +25,16 @@ class CustomTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+        
+        Text(
+          label,
+          style: labelStyle ??
+              const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.black, 
+              ),
+        ),
         const SizedBox(height: 8),
         TextField(
           controller: controller,
@@ -33,7 +44,9 @@ class CustomTextField extends StatelessWidget {
             suffixIcon: isPassword
                 ? IconButton(
                     icon: Icon(
-                      isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                      isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                     ),
                     onPressed: onTogglePassword,
                   )

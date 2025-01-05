@@ -23,7 +23,6 @@ class _HeaderWithIconsState extends State<HeaderWithIcons> {
 
   @override
   Widget build(BuildContext context) {
-    // Warna dinamis berdasarkan tema
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = isDarkMode
         ? Theme.of(context).scaffoldBackgroundColor

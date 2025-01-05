@@ -11,7 +11,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Deteksi apakah mode gelap aktif
+    
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return BottomNavigationBar(
@@ -49,7 +49,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Menampilkan ikon gambar (Beranda) atau ikon default
+        
         if (isImage && icon is String)
           Image.asset(
             icon,
@@ -61,26 +61,26 @@ class CustomBottomNavigationBar extends StatelessWidget {
             icon,
             size: 30,
             color: isSelected
-                ? (isDarkMode ? Colors.pinkAccent : Colors.black) // Fokus
+                ? (isDarkMode ? Colors.pinkAccent : Colors.black) 
                 : (isDarkMode
-                    ? Colors.white // Mode gelap tidak dipilih
-                    : Colors.black), // Mode terang tidak dipilih
+                    ? Colors.white 
+                    : Colors.black), 
           ),
-        // Label tetap putih pada mode gelap
+        
         Text(
           label,
           style: TextStyle(
             fontFamily: 'Poppins',
             fontSize: 11,
             color: isDarkMode
-                ? Colors.white // Tetap putih pada mode gelap
+                ? Colors.white 
                 : (isSelected
-                    ? Colors.black // Fokus pada mode terang
-                    : Colors.black), // Tidak dipilih pada mode terang
+                    ? Colors.black 
+                    : Colors.black), 
             fontWeight: FontWeight.normal,
           ),
         ),
-        // Indikator garis bawah untuk item yang dipilih
+        
         if (isSelected)
           Container(
             margin: const EdgeInsets.only(top: 4),

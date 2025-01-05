@@ -49,7 +49,7 @@ class _LazMallState extends State<LazMall> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HeaderLazMall(
-        searchController: _searchController, // Gunakan HeaderLazMall
+        searchController: _searchController, 
       ),
       body: _isLoading
           ? _buildSkeletonLoader()

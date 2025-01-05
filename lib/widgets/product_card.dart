@@ -12,19 +12,19 @@ class ProductCard extends StatelessWidget {
         ? '\$${NumberFormat("#,##0.00", "en_US").format(product!['price'])}'
         : 'Unknown Price';
 
-    // Deteksi tema saat ini
+    
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       decoration: BoxDecoration(
-        color: isDarkMode ? Color(0xFF1E1E1E) : Colors.white, // Warna card
+        color: isDarkMode ? Color(0xFF1E1E1E) : Colors.white, 
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
             blurRadius: 5,
             color: isDarkMode
                 ? Colors.black.withOpacity(0.6)
-                : Colors.grey.shade300, // Bayangan card
+                : Colors.grey.shade300, 
           ),
         ],
       ),
@@ -33,17 +33,17 @@ class ProductCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Gambar produk dengan latar belakang putih
+              
               if (product != null)
                 ClipRRect(
                   borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
                   child: Container(
-                    height: 150, // Atur tinggi gambar
-                    width: double.infinity, // Memenuhi lebar grid
-                    color: Colors.white, // Latar belakang putih untuk gambar
+                    height: 150, 
+                    width: double.infinity, 
+                    color: Colors.white, 
                     child: Image.network(
                       product!['image'],
-                      fit: BoxFit.contain, // Pastikan seluruh gambar terlihat
+                      fit: BoxFit.contain, 
                     ),
                   ),
                 )
@@ -51,7 +51,7 @@ class ProductCard extends StatelessWidget {
                 Container(
                   height: 150,
                   width: double.infinity,
-                  color: Colors.white, // Placeholder warna putih
+                  color: Colors.white, 
                   child: Icon(
                     Icons.image,
                     size: 50,
@@ -65,7 +65,7 @@ class ProductCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Nama produk
+                    
                     Text(
                       product?['title'] ?? 'Unknown Product',
                       style: TextStyle(
@@ -77,7 +77,7 @@ class ProductCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: 7),
-                    // Harga produk
+                    
                     Text(
                       formattedPrice,
                       style: TextStyle(
@@ -91,7 +91,7 @@ class ProductCard extends StatelessWidget {
               ),
             ],
           ),
-          // Ikon keranjang di kanan bawah
+          
           Positioned(
             bottom: 8,
             right: 8,

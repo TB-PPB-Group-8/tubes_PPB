@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../controllers/sign_up_controller.dart';
-import '../widgets/custom_text_field.dart'; // Buat widget TextField custom
+import '../widgets/custom_text_field.dart'; 
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -35,23 +35,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
               const SizedBox(height: 30),
               const Text(
                 "Sign up",
-                style: TextStyle(fontSize: 36, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
               ),
               const SizedBox(height: 50),
               CustomTextField(
                 label: "Email",
+                labelStyle: const TextStyle(color: Colors.black), 
                 controller: _emailController,
                 hintText: "example@gmail.com",
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 label: "Name",
+                labelStyle: const TextStyle(color: Colors.black), 
                 controller: _nameController,
                 hintText: "your name",
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 label: "Create password",
+                labelStyle: const TextStyle(color: Colors.black), 
                 controller: _passwordController,
                 hintText: "Must be 6 characters",
                 isPassword: true,
@@ -65,6 +71,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               const SizedBox(height: 16),
               CustomTextField(
                 label: "Confirm password",
+                labelStyle: const TextStyle(color: Colors.black), 
                 controller: _confirmPasswordController,
                 hintText: "Repeat password",
                 isPassword: true,
@@ -111,6 +118,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ],
                     ),
                   ),
+                ),
+              ),
+              const SizedBox(height: 60), 
+              Center(
+                child: Column(
+                  children: [
+                    Image.asset(
+                      'assets/images/lazada_logo2.png', 
+                      height: 60, 
+                    ),
+                    const SizedBox(height: 8), 
+                  ],
                 ),
               ),
             ],

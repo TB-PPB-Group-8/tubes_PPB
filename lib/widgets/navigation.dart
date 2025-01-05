@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CustomBottomNavigationBarLazMall extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Deteksi apakah mode gelap aktif
+    
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
@@ -11,7 +11,7 @@ class CustomBottomNavigationBarLazMall extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 12),
       color: isDarkMode
           ? Colors.grey[900]
-          : const Color(0xFFF8C8C8), // Warna sesuai tema
+          : const Color(0xFFF8C8C8), 
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -35,8 +35,8 @@ class CustomBottomNavigationBarLazMall extends StatelessWidget {
       children: [
         Image.asset(
           icon,
-          height: 36, // Ukuran ikon tetap
-          color: isDarkMode ? Colors.white : null, // Warna ikon saat mode gelap
+          height: 36, 
+          color: isDarkMode ? Colors.white : null, 
         ),
         if (isSelected)
           Container(
@@ -44,7 +44,7 @@ class CustomBottomNavigationBarLazMall extends StatelessWidget {
             width: 50,
             height: 2,
             color:
-                isDarkMode ? Colors.white : Colors.black, // Warna garis bawah
+                isDarkMode ? Colors.white : Colors.black, 
           ),
       ],
     );

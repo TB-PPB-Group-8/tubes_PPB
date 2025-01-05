@@ -62,11 +62,11 @@ class CategoryGrid extends StatelessWidget {
       },
     ];
 
-    // Hitung jumlah kolom berdasarkan lebar layar
+    
     double screenWidth = MediaQuery.of(context).size.width;
-    int crossAxisCount = 5; // Tetapkan 5 kolom tetap
+    int crossAxisCount = 5; 
 
-    // Deteksi mode tema
+    
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return GridView.builder(
@@ -74,10 +74,10 @@ class CategoryGrid extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount, // Tetapkan 5 kolom
+        crossAxisCount: crossAxisCount, 
         crossAxisSpacing: crossAxisSpacing,
         mainAxisSpacing: mainAxisSpacing,
-        childAspectRatio: 1.0, // Proporsi persegi untuk elemen grid
+        childAspectRatio: 1.0, 
       ),
       itemBuilder: (context, index) {
         final category = categories[index];
@@ -87,7 +87,7 @@ class CategoryGrid extends StatelessWidget {
             Container(
               width: screenWidth /
                   crossAxisCount *
-                  0.7, // Ukuran gambar proporsional
+                  0.7, 
               height: screenWidth / crossAxisCount * 0.7,
               padding: category.containsKey('borderColor')
                   ? const EdgeInsets.all(4)
@@ -111,14 +111,14 @@ class CategoryGrid extends StatelessWidget {
             SizedBox(
               width: screenWidth /
                   crossAxisCount *
-                  0.8, // Sesuaikan teks dengan kolom
+                  0.8, 
               child: Text(
                 category['label']!,
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: 10, // Ukuran font kecil
+                  fontSize: 10, 
                   color: isDarkMode ? Colors.white : Colors.black,
                 ),
               ),
