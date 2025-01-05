@@ -34,7 +34,7 @@ class CategoryGrid extends StatelessWidget {
       },
       {
         'image': 'assets/images/mulai_dari_1rb.png',
-        'label': 'Mulai dari 1RB',
+        'label': 'Choice',
         'borderColor': Color(0xFFFDCD10),
         'backgroundColor': Color(0xFFFDCD10),
       },
@@ -52,7 +52,7 @@ class CategoryGrid extends StatelessWidget {
       },
       {
         'image': 'assets/images/ulasan_berhadiah.png',
-        'label': 'Ulasan Berhadiah',
+        'label': 'Reward',
       },
       {
         'image': 'assets/images/tiket.png',
@@ -64,8 +64,7 @@ class CategoryGrid extends StatelessWidget {
 
     // Hitung jumlah kolom berdasarkan lebar layar
     double screenWidth = MediaQuery.of(context).size.width;
-    int crossAxisCount = screenWidth ~/ 100; // Minimal ukuran item 100px
-    crossAxisCount = crossAxisCount < 2 ? 2 : crossAxisCount; // Minimal 2 kolom
+    int crossAxisCount = 5; // Tetapkan 5 kolom tetap
 
     // Deteksi mode tema
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -75,10 +74,10 @@ class CategoryGrid extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount, // Responsif berdasarkan layar
+        crossAxisCount: crossAxisCount, // Tetapkan 5 kolom
         crossAxisSpacing: crossAxisSpacing,
         mainAxisSpacing: mainAxisSpacing,
-        childAspectRatio: 1.0, // Menjaga proporsi elemen
+        childAspectRatio: 1.0, // Proporsi persegi untuk elemen grid
       ),
       itemBuilder: (context, index) {
         final category = categories[index];
@@ -86,8 +85,9 @@ class CategoryGrid extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width:
-                  screenWidth / crossAxisCount * 0.7, // Ukuran gambar responsif
+              width: screenWidth /
+                  crossAxisCount *
+                  0.7, // Ukuran gambar proporsional
               height: screenWidth / crossAxisCount * 0.7,
               padding: category.containsKey('borderColor')
                   ? const EdgeInsets.all(4)
@@ -111,18 +111,15 @@ class CategoryGrid extends StatelessWidget {
             SizedBox(
               width: screenWidth /
                   crossAxisCount *
-                  0.9, // Teks menyesuaikan lebar item
+                  0.8, // Sesuaikan teks dengan kolom
               child: Text(
                 category['label']!,
                 textAlign: TextAlign.center,
-                maxLines: 1, // Teks hanya 1 baris
-                overflow:
-                    TextOverflow.ellipsis, // Teks panjang dipotong dengan "..."
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: 10, // Ukuran font kecil dan proporsional
-                  color: isDarkMode
-                      ? Colors.white
-                      : Colors.black, // Warna tergantung tema
+                  fontSize: 10, // Ukuran font kecil
+                  color: isDarkMode ? Colors.white : Colors.black,
                 ),
               ),
             ),

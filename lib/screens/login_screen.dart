@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore library
-import 'package:shared_preferences/shared_preferences.dart'; // SharedPreferences library
+import '../controllers/login_controller.dart'; // Import controller
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -11,51 +10,13 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isPasswordVisible = false;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
+  final LoginController _controller = LoginController();
   String? _errorMessage; // Variabel untuk menyimpan pesan error
 
-  Future<void> _login() async {
-    String email = _emailController.text.trim();
-    String password = _passwordController.text.trim();
-
-    if (email.isEmpty || password.isEmpty) {
-      setState(() {
-        _errorMessage = "Email dan Password tidak boleh kosong.";
-      });
-      return;
-    }
-
-    try {
-      // Query Firestore untuk mencocokkan email dan password
-      QuerySnapshot userSnapshot = await _firestore
-          .collection('user')
-          .where('email', isEqualTo: email)
-          .where('password', isEqualTo: password)
-          .get();
-
-      if (userSnapshot.docs.isNotEmpty) {
-        // Login berhasil
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString(
-            'email', email); // Simpan email ke SharedPreferences
-        print("Login berhasil! Email disimpan di SharedPreferences.");
-        setState(() {
-          _errorMessage = null; // Reset pesan error jika ada
-        });
-        Navigator.pushReplacementNamed(context, '/home'); // Navigasi ke Home
-      } else {
-        // Login gagal
-        setState(() {
-          _errorMessage = "Email atau Password salah.";
-        });
-      }
-    } catch (e) {
-      print("Error saat login: $e");
-      setState(() {
-        _errorMessage = "Terjadi kesalahan. Silakan coba lagi.";
-      });
-    }
+  void _setErrorMessage(String? message) {
+    setState(() {
+      _errorMessage = message;
+    });
   }
 
   @override
@@ -206,7 +167,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               const SizedBox(height: 10),
               ElevatedButton(
-                onPressed: _login,
+                onPressed: () {
+                  _controller.login(
+                    context,
+                    _emailController,
+                    _passwordController,
+                    _setErrorMessage,
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
                   backgroundColor: Colors.red,

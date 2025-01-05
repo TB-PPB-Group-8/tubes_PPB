@@ -11,39 +11,46 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Deteksi apakah mode gelap aktif
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: onTap,
       type: BottomNavigationBarType.fixed,
-      backgroundColor: Colors.grey[300],
-      selectedItemColor: Colors.black,
-      unselectedItemColor: Colors.black,
+      backgroundColor: isDarkMode ? const Color(0xFF1E1E1E) : Colors.grey[300],
+      selectedItemColor: isDarkMode ? Colors.pinkAccent : Colors.black,
+      unselectedItemColor: isDarkMode ? Colors.white : Colors.black,
       items: [
         _buildCustomBottomNavigationBarItem(
-            'assets/images/home_icon.png', 'Beranda', 0),
+            'assets/images/home_icon.png', 'Beranda', 0, isDarkMode, true),
         _buildCustomBottomNavigationBarItem(
-            Icons.shopping_cart, 'Keranjang', 1),
-        _buildCustomBottomNavigationBarItem(Icons.message, 'Pesan', 2),
-        _buildCustomBottomNavigationBarItem(Icons.person, 'Akun', 3),
+            Icons.shopping_cart, 'Keranjang', 1, isDarkMode, false),
+        _buildCustomBottomNavigationBarItem(
+            Icons.message, 'Pesan', 2, isDarkMode, false),
+        _buildCustomBottomNavigationBarItem(
+            Icons.person, 'Akun', 3, isDarkMode, false),
       ],
     );
   }
 
   BottomNavigationBarItem _buildCustomBottomNavigationBarItem(
-      dynamic icon, String label, int index) {
+      dynamic icon, String label, int index, bool isDarkMode, bool isImage) {
     bool isSelected = currentIndex == index;
+
     return BottomNavigationBarItem(
-      icon: _buildIconWithLabel(icon, label, isSelected),
+      icon: _buildIconWithLabel(icon, label, isSelected, isDarkMode, isImage),
       label: '',
     );
   }
 
-  Widget _buildIconWithLabel(dynamic icon, String label, bool isSelected) {
+  Widget _buildIconWithLabel(dynamic icon, String label, bool isSelected,
+      bool isDarkMode, bool isImage) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Menampilkan ikon, baik gambar (String) atau ikon (IconData)
-        if (icon is String)
+        // Menampilkan ikon gambar (Beranda) atau ikon default
+        if (isImage && icon is String)
           Image.asset(
             icon,
             width: 30,
@@ -53,22 +60,33 @@ class CustomBottomNavigationBar extends StatelessWidget {
           Icon(
             icon,
             size: 30,
+            color: isSelected
+                ? (isDarkMode ? Colors.pinkAccent : Colors.black) // Fokus
+                : (isDarkMode
+                    ? Colors.white // Mode gelap tidak dipilih
+                    : Colors.black), // Mode terang tidak dipilih
           ),
+        // Label tetap putih pada mode gelap
         Text(
           label,
           style: TextStyle(
             fontFamily: 'Poppins',
             fontSize: 11,
-            color: isSelected ? Colors.black : Colors.black,
+            color: isDarkMode
+                ? Colors.white // Tetap putih pada mode gelap
+                : (isSelected
+                    ? Colors.black // Fokus pada mode terang
+                    : Colors.black), // Tidak dipilih pada mode terang
             fontWeight: FontWeight.normal,
           ),
         ),
+        // Indikator garis bawah untuk item yang dipilih
         if (isSelected)
           Container(
-            margin: EdgeInsets.only(top: 4),
+            margin: const EdgeInsets.only(top: 4),
             width: 50,
             height: 2,
-            color: Colors.black,
+            color: isDarkMode ? Colors.pinkAccent : Colors.black,
           ),
       ],
     );

@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:project_lazada/screens/lazmall_screen.dart' show LazMall;
 import 'package:provider/provider.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:project_lazada/themes/theme_provider.dart';
-import 'package:project_lazada/widgets/product_card.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../widgets/carousel_banner.dart';
+import '../widgets/promo_section.dart';
+import '../widgets/laz_flash_section.dart';
 import '../widgets/category_grid.dart';
-import 'package:project_lazada/widgets/custom_bottom_navigation_bar.dart';
+import '../widgets/custom_bottom_navigation_bar.dart';
+import '../widgets/header_with_icons.dart';
+import '../themes/theme_provider.dart';
 import 'cart_screen.dart';
 import 'profile_screen.dart';
 import 'message_screen.dart';
+import 'lazmall_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -17,6 +21,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
+  List<dynamic> _products = [];
+  List<dynamic> _filteredProducts = []; // Produk hasil pencarian
+  bool _isLoading = true;
 
   final List<String> banners = [
     'assets/images/banner1.png',
@@ -25,11 +32,47 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _fetchProducts();
+  }
+
+  Future<void> _fetchProducts() async {
+    try {
+      final response =
+          await http.get(Uri.parse('https://fakestoreapi.com/products'));
+      if (response.statusCode == 200) {
+        setState(() {
+          _products = json.decode(response.body);
+          _filteredProducts = _products; // Awalnya tampilkan semua produk
+          _isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to load products');
+      }
+    } catch (e) {
+      print('Error fetching products: $e');
+    }
+  }
+
+  void _handleSearch(String query) {
+    setState(() {
+      _filteredProducts = _products.where((product) {
+        final productTitle = product['title'].toLowerCase();
+        return productTitle.contains(query.toLowerCase());
+      }).toList();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
-      appBar: _buildAppBar(themeProvider),
+      appBar: HeaderWithIcons(
+        themeProvider: themeProvider,
+        onSearch: _handleSearch, 
+      ),
       body: _screens[_currentIndex],
       bottomNavigationBar: CustomBottomNavigationBar(
         currentIndex: _currentIndex,
@@ -49,279 +92,25 @@ class _HomeScreenState extends State<HomeScreen> {
         ProfileScreen(),
       ];
 
-  AppBar _buildAppBar(ThemeProvider themeProvider) {
-    return AppBar(
-      toolbarHeight: 60,
-      backgroundColor: Colors.white,
-      elevation: 0,
-      centerTitle: false,
-      title: Row(
-        children: [
-          IconButton(
-            icon: Icon(Icons.qr_code_scanner, size: 30, color: Colors.black),
-            onPressed: () {},
-          ),
-          Expanded(
-            child: Container(
-              height: 40,
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                color: Colors.red[50],
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: const Row(
-                children: [
-                  Icon(Icons.search, color: Colors.red, size: 20),
-                  SizedBox(width: 5),
-                  Text(
-                    'Search...',
-                    style: TextStyle(color: Colors.red, fontSize: 16),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              themeProvider.themeMode == ThemeMode.light
-                  ? Icons.dark_mode
-                  : Icons.light_mode,
-              size: 30,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              themeProvider.toggleTheme();
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildHomeContent() {
     return SingleChildScrollView(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildCarouselBanner(),
-          SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: CategoryGrid(
-              crossAxisSpacing: 8.0,
-              mainAxisSpacing: 8.0,
-            ),
-          ),
-          SizedBox(height: 20),
-          _buildPromoSection(),
-          SizedBox(height: 20),
-          _buildLazFlashSection(context),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCarouselBanner() {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: CarouselSlider(
-            options: CarouselOptions(
-              height: MediaQuery.of(context).size.width * 0.5,
-              autoPlay: true,
-              enlargeCenterPage: false,
-              viewportFraction: 1.0,
-              clipBehavior: Clip.hardEdge,
-            ),
-            items: banners.map((imagePath) {
-              return Builder(
-                builder: (BuildContext context) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage(imagePath),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              );
-            }).toList(),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildPromoSection() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        double screenWidth = MediaQuery.of(context).size.width;
-        double cardWidth = screenWidth * 0.4; // 40% dari lebar layar
-        double cardHeight = screenWidth * 0.5; // 50% dari lebar layar
-
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Promo Pengguna Baru!',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  GestureDetector(
-                    onTap: () {},
-                    child: const Padding(
-                      padding: EdgeInsets.only(right: 16.0),
-                      child: Text(
-                        'Lihat >',
-                        style: TextStyle(fontSize: 14, color: Colors.black),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: List.generate(2, (index) {
-                    if (index == 1) {
-                      return Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: Container(
-                              width: cardWidth,
-                              height: cardHeight,
-                              child: ProductCard(),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            height: cardHeight,
-                            width: cardWidth,
-                            decoration: BoxDecoration(
-                              color: Colors.indigo,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
-                                  spreadRadius: 2,
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: Colors.tealAccent,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: const Text(
-                                    'RP 20.000\nkhusus pengguna baru',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                                const SizedBox(height: 30),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    print("Ambil ditekan");
-                                  },
-                                  child: const Text("Ambil"),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      );
-                    } else {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: Container(
-                          width: cardWidth,
-                          height: cardHeight,
-                          child: ProductCard(),
-                        ),
-                      );
-                    }
-                  }),
-                ),
-              )
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildLazFlashSection(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'LazFlash',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LazMall()),
-                  );
-                },
-                child: const Padding(
-                  padding: EdgeInsets.only(right: 16.0),
-                  child: Text(
-                    'Lainnya >',
-                    style: TextStyle(fontSize: 14, color: Colors.black),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              int crossAxisCount = constraints.maxWidth ~/ 180;
-              crossAxisCount = crossAxisCount < 2 ? 2 : crossAxisCount;
-
-              return GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: crossAxisCount,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                  childAspectRatio: 3 / 4,
-                ),
-                itemCount: 10,
-                itemBuilder: (context, index) => ProductCard(),
+          CarouselBanner(banners: banners),
+          SizedBox(height: 16.0),
+          CategoryGrid(crossAxisSpacing: 7.0, mainAxisSpacing: 7.0),
+          SizedBox(height: 16.0),
+          _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : PromoSection(products: _filteredProducts),
+          SizedBox(height: 16.0),
+          LazFlashSection(
+            isLoading: _isLoading,
+            products: _filteredProducts,
+            onMorePressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LazMall()),
               );
             },
           ),

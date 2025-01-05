@@ -4,24 +4,54 @@ class AppTheme {
   static final lightTheme = ThemeData(
     brightness: Brightness.light,
     primarySwatch: Colors.pink,
-    scaffoldBackgroundColor: Colors.white,
+    scaffoldBackgroundColor: Colors.grey.shade100,
     appBarTheme: AppBarTheme(
-        backgroundColor: Colors.pink, foregroundColor: Colors.white),
+      backgroundColor: Colors.pink.shade500,
+      foregroundColor: Colors.white,
+    ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      selectedItemColor: Colors.pink,
-      unselectedItemColor: Colors.grey,
+      selectedItemColor: Colors.pink.shade500,
+      unselectedItemColor: Colors.grey.shade600,
+    ),
+    textTheme: TextTheme(
+      bodyLarge: TextStyle(color: Colors.grey.shade900),
+      bodyMedium: TextStyle(color: Colors.grey.shade800),
+    ),
+    cardColor: Colors.white,
+    canvasColor: Colors.grey.shade200,
+    iconTheme: IconThemeData(color: Colors.grey.shade900),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.pink.shade500),
+        foregroundColor: MaterialStateProperty.all(Colors.white),
+      ),
     ),
   );
 
   static final darkTheme = ThemeData(
     brightness: Brightness.dark,
     primarySwatch: Colors.pink,
-    scaffoldBackgroundColor: Color(0x080904),
+    scaffoldBackgroundColor: Colors.grey.shade900,
     appBarTheme: AppBarTheme(
-        backgroundColor: Color(0x080904), foregroundColor: Colors.white),
+      backgroundColor: Colors.grey.shade800,
+      foregroundColor: Colors.white,
+    ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      selectedItemColor: Colors.pink,
-      unselectedItemColor: Colors.grey,
+      selectedItemColor: Colors.pink.shade400,
+      unselectedItemColor: Colors.grey.shade500,
+    ),
+    textTheme: TextTheme(
+      bodyLarge: TextStyle(color: Colors.grey.shade200),
+      bodyMedium: TextStyle(color: Colors.grey.shade400),
+    ),
+    cardColor: Colors.grey.shade800,
+    canvasColor: Colors.grey.shade800,
+    iconTheme: IconThemeData(color: Colors.grey.shade200),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.pink.shade400),
+        foregroundColor: MaterialStateProperty.all(Colors.grey.shade900),
+      ),
     ),
   );
 }
