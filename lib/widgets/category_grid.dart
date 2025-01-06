@@ -5,8 +5,8 @@ class CategoryGrid extends StatelessWidget {
   final double mainAxisSpacing;
 
   CategoryGrid({
-    this.crossAxisSpacing = 5.0, // Default spacing
-    this.mainAxisSpacing = 8.0, // Default spacing
+    this.crossAxisSpacing = 5.0,
+    this.mainAxisSpacing = 8.0,
   });
 
   @override
@@ -34,7 +34,7 @@ class CategoryGrid extends StatelessWidget {
       },
       {
         'image': 'assets/images/mulai_dari_1rb.png',
-        'label': 'Mulai dari 1RB',
+        'label': 'Choice',
         'borderColor': Color(0xFFFDCD10),
         'backgroundColor': Color(0xFFFDCD10),
       },
@@ -52,7 +52,7 @@ class CategoryGrid extends StatelessWidget {
       },
       {
         'image': 'assets/images/ulasan_berhadiah.png',
-        'label': 'Ulasan Berhadiah',
+        'label': 'Reward',
       },
       {
         'image': 'assets/images/tiket.png',
@@ -62,15 +62,22 @@ class CategoryGrid extends StatelessWidget {
       },
     ];
 
+    
+    double screenWidth = MediaQuery.of(context).size.width;
+    int crossAxisCount = 5; 
+
+    
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return GridView.builder(
       itemCount: categories.length,
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 5,
+        crossAxisCount: crossAxisCount, 
         crossAxisSpacing: crossAxisSpacing,
         mainAxisSpacing: mainAxisSpacing,
-        childAspectRatio: 0.9,
+        childAspectRatio: 1.0, 
       ),
       itemBuilder: (context, index) {
         final category = categories[index];
@@ -78,10 +85,12 @@ class CategoryGrid extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 55,
-              height: 55,
+              width: screenWidth /
+                  crossAxisCount *
+                  0.7, 
+              height: screenWidth / crossAxisCount * 0.7,
               padding: category.containsKey('borderColor')
-                  ? EdgeInsets.all(4)
+                  ? const EdgeInsets.all(4)
                   : EdgeInsets.zero,
               decoration: BoxDecoration(
                 color: category['backgroundColor'] ?? Colors.transparent,
@@ -98,13 +107,20 @@ class CategoryGrid extends StatelessWidget {
                 fit: BoxFit.contain,
               ),
             ),
-            SizedBox(height: 4),
-            Text(
-              category['label']!,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.black,
+            const SizedBox(height: 4),
+            SizedBox(
+              width: screenWidth /
+                  crossAxisCount *
+                  0.8, 
+              child: Text(
+                category['label']!,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 10, 
+                  color: isDarkMode ? Colors.white : Colors.black,
+                ),
               ),
             ),
           ],

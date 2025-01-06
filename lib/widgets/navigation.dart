@@ -3,50 +3,48 @@ import 'package:flutter/material.dart';
 class CustomBottomNavigationBarLazMall extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 8),
-      color: Color(0xFFF8C8C8),
+      height: 70,
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      color: isDarkMode
+          ? Colors.grey[900]
+          : const Color(0xFFF8C8C8), 
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildCustomBottomNavigationBarItem(
-              'assets/images/icon_lazmall.png', 'LazMall', true),
+              'assets/images/icon_lazmall.png', true, isDarkMode),
           _buildCustomBottomNavigationBarItem(
-              'assets/images/mulai_dari_1rb.png', 'Choice', false),
+              'assets/images/mulai_dari_1rb.png', false, false),
           _buildCustomBottomNavigationBarItem(
-              'assets/images/icon_lazsubsidi.png', 'LazSubsidy', false),
+              'assets/images/icon_lazsubsidi.png', false, isDarkMode),
           _buildCustomBottomNavigationBarItem(
-              'assets/images/icon_keranjang.png', 'Keranjang', false),
+              'assets/images/icon_keranjang.png', false, isDarkMode),
         ],
       ),
     );
   }
 
   Widget _buildCustomBottomNavigationBarItem(
-      String icon, String label, bool isSelected) {
+      String icon, bool isSelected, bool isDarkMode) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Image.asset(
           icon,
-          height: 24,
-        ),
-        SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 12,
-            color: isSelected ? Colors.black : Colors.black,
-            fontWeight: FontWeight.normal,
-          ),
+          height: 36, 
+          color: isDarkMode ? Colors.white : null, 
         ),
         if (isSelected)
           Container(
-            margin: EdgeInsets.only(top: 4),
+            margin: const EdgeInsets.only(top: 4),
             width: 50,
             height: 2,
-            color: Colors.black,
+            color:
+                isDarkMode ? Colors.white : Colors.black, 
           ),
       ],
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../controllers/login_controller.dart'; // Import controller
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -7,6 +8,17 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _isPasswordVisible = false;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final LoginController _controller = LoginController();
+  String? _errorMessage; // Variabel untuk menyimpan pesan error
+
+  void _setErrorMessage(String? message) {
+    setState(() {
+      _errorMessage = message;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,6 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
                 child: TextField(
+                  controller: _emailController,
                   decoration: InputDecoration(
                     hintText: "Enter your Email",
                     hintStyle: const TextStyle(color: Colors.grey),
@@ -102,6 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
                 child: TextField(
+                  controller: _passwordController,
                   obscureText: !_isPasswordVisible,
                   decoration: InputDecoration(
                     hintText: "********",
@@ -114,7 +128,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Colors.grey,
                       ),
                       onPressed: () {
-                        // Ketika ikon mata diklik, toggle status password
                         setState(() {
                           _isPasswordVisible = !_isPasswordVisible;
                         });
@@ -146,36 +159,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    "Forgot Password?",
-                    style: TextStyle(color: Colors.white),
-                  ),
+              const SizedBox(height: 20),
+              if (_errorMessage != null)
+                Text(
+                  _errorMessage!,
+                  style: TextStyle(color: Colors.red, fontSize: 14),
                 ),
-              ),
-              Row(
-                children: [
-                  Checkbox(value: false, onChanged: (value) {}),
-                  const Text(
-                    "Remember me",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
-                  print("Navigating to Home...");
-                  try {
-                    Navigator.pushReplacementNamed(context, '/home');
-                    print("Navigation successful!");
-                  } catch (e) {
-                    print("Error during navigation: $e");
-                  }
+                  _controller.login(
+                    context,
+                    _emailController,
+                    _passwordController,
+                    _setErrorMessage,
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
@@ -247,7 +245,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
             ],
           ),
         ),

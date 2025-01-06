@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "47898986107",
+    "project_id": "project-ppb-68d41",
+    "storage_bucket": "project-ppb-68d41.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:47898986107:android:15c34715bc312ae49fc4de",
+        "android_client_info": {
+          "package_name": "com.example.project_lazada"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQX1gYgEGeqxWsS8jcV0EOJj9cFrVqBYM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

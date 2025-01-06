@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import '../widgets/profile_avatar.dart';
+import '../widgets/profile_card.dart';
+import '../widgets/profile_buttons.dart';
+import '../services/user_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -6,97 +10,114 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  String _savedName = '';
-  String _savedEmail = '';
+  String _email = '';
+  String _name = '';
+  String _password = '';
 
   @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _loadProfileData();
   }
 
-  void _saveProfile() {
+  Future<void> _loadProfileData() async {
+    String? email = await UserService.getEmailFromPreferences();
+    if (email != null) {
+      setState(() {
+        _email = email;
+      });
+      Map<String, String> userData = await UserService.fetchUserData(email);
+      setState(() {
+        _name = userData['name'] ?? 'No Name';
+        _password = userData['password'] ?? 'No Password';
+      });
+    }
+  }
+
+  void _updateProfile(String name, String password) async {
+    await UserService.updateUserData(_email, name, password);
     setState(() {
-      _savedName = _nameController.text;
-      _savedEmail = _emailController.text;
+      _name = name;
+      _password = password;
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Profile Saved!'),
-        backgroundColor: Colors.green,
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
+      backgroundColor: isDarkMode ? Colors.grey[900] : const Color(0xFFEEF1F8),
       appBar: AppBar(
-        title: Text('Profile'),
+        title: const Text('My Profile'),
+        backgroundColor: isDarkMode ? Colors.grey[850] : Colors.blueAccent,
+        elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            ProfileAvatar(isDarkMode: isDarkMode),
+            const SizedBox(height: 70),
+            ProfileCard(
+              email: _email,
+              name: _name,
+              password: _password,
+            ),
+            const SizedBox(height: 20),
+            ProfileButtons(
+              onEditProfile: () => _showEditProfileDialog(),
+              onLogout: () async {
+                await UserService.logout();
+                Navigator.pushReplacementNamed(context, '/login');
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showEditProfileDialog() {
+    TextEditingController nameController = TextEditingController(text: _name);
+    TextEditingController passwordController =
+        TextEditingController(text: _password);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Edit Profile'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Center(
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundColor: Colors.blue,
-                  child: Icon(Icons.person, size: 50, color: Colors.white),
-                ),
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Name'),
               ),
-              SizedBox(height: 20),
-              Text(
-                'Edit Your Profile',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: 'Name',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 10),
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _saveProfile,
-                child: Text('Save Changes'),
-              ),
-              SizedBox(height: 30),
-              Divider(),
-              SizedBox(height: 10),
-              Text(
-                'Saved Profile',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              Text(
-                'Name: ${_savedName.isEmpty ? "Not set" : _savedName}',
-                style: TextStyle(fontSize: 16),
-              ),
-              SizedBox(height: 5),
-              Text(
-                'Email: ${_savedEmail.isEmpty ? "Not set" : _savedEmail}',
-                style: TextStyle(fontSize: 16),
+              TextField(
+                controller: passwordController,
+                decoration: const InputDecoration(labelText: 'Password'),
+                obscureText: true,
               ),
             ],
           ),
-        ),
-      ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                String newName = nameController.text;
+                String newPassword = passwordController.text;
+                _updateProfile(newName, newPassword);
+                Navigator.pop(context);
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
