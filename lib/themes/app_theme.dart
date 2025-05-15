@@ -26,6 +26,20 @@ class AppTheme {
         foregroundColor: MaterialStateProperty.all(Colors.white),
       ),
     ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: Colors.white,
+      hintStyle: TextStyle(color: Colors.grey),
+      labelStyle: TextStyle(color: Colors.black),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: Colors.grey.shade400),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: Colors.pink.shade400),
+      ),
+    ),
   );
 
   static final darkTheme = ThemeData(

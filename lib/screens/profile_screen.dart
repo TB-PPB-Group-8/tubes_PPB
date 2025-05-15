@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 import '../widgets/profile_avatar.dart';
 import '../widgets/profile_card.dart';
 import '../widgets/profile_buttons.dart';
@@ -12,7 +13,6 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   String _email = '';
   String _name = '';
-  String _password = '';
 
   @override
   void initState() {
@@ -20,25 +20,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadProfileData();
   }
 
+  // Memuat data profil dari Firebase Authentication
   Future<void> _loadProfileData() async {
-    String? email = await UserService.getEmailFromPreferences();
-    if (email != null) {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
       setState(() {
-        _email = email;
-      });
-      Map<String, String> userData = await UserService.fetchUserData(email);
-      setState(() {
-        _name = userData['name'] ?? 'No Name';
-        _password = userData['password'] ?? 'No Password';
+        _email = user.email ?? 'No Email';
+        _name = user.displayName ?? 'No Name';
       });
     }
   }
 
-  void _updateProfile(String name, String password) async {
-    await UserService.updateUserData(_email, name, password);
+  void _updateProfile(String name) async {
+    await UserService.updateUserData(_email, name); // Update nama pengguna
     setState(() {
       _name = name;
-      _password = password;
     });
   }
 
@@ -61,13 +58,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ProfileCard(
               email: _email,
               name: _name,
-              password: _password,
+              password:
+                  'Password is hidden', // Tidak menampilkan password di sini
             ),
             const SizedBox(height: 20),
             ProfileButtons(
               onEditProfile: () => _showEditProfileDialog(),
               onLogout: () async {
-                await UserService.logout();
+                await UserService.logout(); // Logout pengguna
                 Navigator.pushReplacementNamed(context, '/login');
               },
             ),
@@ -79,8 +77,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _showEditProfileDialog() {
     TextEditingController nameController = TextEditingController(text: _name);
-    TextEditingController passwordController =
-        TextEditingController(text: _password);
 
     showDialog(
       context: context,
@@ -94,11 +90,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 controller: nameController,
                 decoration: const InputDecoration(labelText: 'Name'),
               ),
-              TextField(
-                controller: passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-              ),
             ],
           ),
           actions: [
@@ -109,8 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ElevatedButton(
               onPressed: () async {
                 String newName = nameController.text;
-                String newPassword = passwordController.text;
-                _updateProfile(newName, newPassword);
+                _updateProfile(newName);
                 Navigator.pop(context);
               },
               child: const Text('Save'),

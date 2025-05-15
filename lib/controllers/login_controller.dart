@@ -1,10 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   Future<void> login(
     BuildContext context,
     TextEditingController emailController,
@@ -20,28 +18,49 @@ class LoginController {
     }
 
     try {
-      // Query Firestore untuk mencocokkan email dan password
-      QuerySnapshot userSnapshot = await _firestore
-          .collection('user')
-          .where('email', isEqualTo: email)
-          .where('password', isEqualTo: password)
-          .get();
+      // Menggunakan FirebaseAuth untuk login pengguna
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-      if (userSnapshot.docs.isNotEmpty) {
-        // Login berhasil
+      // Mengakses data pengguna dari userCredential
+      User? user = userCredential.user;
+
+      // Cek apakah user berhasil login
+      if (user != null) {
+        // Menggunakan null-aware operator untuk mengambil displayName, jika null, set "User"
+        String name =
+            user.displayName ?? "User"; // Nama default jika displayName null
+
+        // Menyimpan email dan nama pengguna di SharedPreferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString(
-            'email', email); // Simpan email ke SharedPreferences
-        print("Login berhasil! Email disimpan di SharedPreferences.");
-        setErrorMessage(null); // Reset pesan error jika ada
-        Navigator.pushReplacementNamed(context, '/home'); // Navigasi ke Home
+        await prefs.setString('email', user.email ?? '');
+        await prefs.setString('name', name);
+
+        print('Email: $email');
+        print('Name: $name'); // Menyimpan nama, jika displayName null
+
+        // Log keberhasilan login
+        print("Login berhasil! Email dan nama disimpan di SharedPreferences.");
+
+        setErrorMessage(null);
+
+        // Navigasi ke halaman utama setelah login berhasil
+        Navigator.pushReplacementNamed(context, '/home');
       } else {
-        // Login gagal
-        setErrorMessage("Email atau Password salah.");
+        // Jika user null, beri pesan error
+        setErrorMessage("Login gagal. Coba lagi.");
       }
-    } catch (e) {
-      print("Error saat login: $e");
-      setErrorMessage("Terjadi kesalahan. Silakan coba lagi.");
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        setErrorMessage("Email tidak terdaftar.");
+      } else if (e.code == 'wrong-password') {
+        setErrorMessage("Password salah.");
+      } else {
+        setErrorMessage("Terjadi kesalahan, silakan coba lagi.");
+      }
     }
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../controllers/login_controller.dart'; // Import controller
+import '../controllers/login_controller.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -11,11 +11,38 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final LoginController _controller = LoginController();
-  String? _errorMessage; // Variabel untuk menyimpan pesan error
+
+  String? _errorMessage;
+  String? _emailError;
+  String? _passwordError;
 
   void _setErrorMessage(String? message) {
     setState(() {
       _errorMessage = message;
+    });
+  }
+
+  void _validateEmail(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        _emailError = 'Email tidak boleh kosong';
+      } else if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value)) {
+        _emailError = 'Format email tidak valid';
+      } else {
+        _emailError = null;
+      }
+    });
+  }
+
+  void _validatePassword(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        _passwordError = 'Password tidak boleh kosong';
+      } else if (value.length < 6) {
+        _passwordError = 'Password minimal 6 karakter';
+      } else {
+        _passwordError = null;
+      }
     });
   }
 
@@ -29,21 +56,16 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             children: [
               const SizedBox(height: 100),
-              Image.asset(
-                'assets/images/lazada_logo.png',
-                height: 163,
-              ),
+              Image.asset('assets/images/lazada_logo.png', height: 163),
               const SizedBox(height: 40),
               const Align(
                 alignment: Alignment.centerLeft,
-                child: Text(
-                  "Email",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                child: Text("Email",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    )),
               ),
               const SizedBox(height: 8),
               DecoratedBox(
@@ -60,31 +82,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 child: TextField(
                   controller: _emailController,
+                  onChanged: _validateEmail,
                   decoration: InputDecoration(
                     hintText: "Enter your Email",
                     hintStyle: const TextStyle(color: Colors.grey),
+                    errorText: _emailError,
                     filled: true,
                     fillColor: Colors.white,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(
-                        color: Colors.grey.shade400,
-                        width: 2,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(
-                        color: Colors.grey.shade400,
-                        width: 2,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                        color: Colors.transparent,
-                        width: 2,
-                      ),
+                      borderSide: BorderSide(color: Colors.grey.shade400),
                     ),
                   ),
                 ),
@@ -92,14 +99,12 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 16),
               const Align(
                 alignment: Alignment.centerLeft,
-                child: Text(
-                  "Password",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                child: Text("Password",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    )),
               ),
               const SizedBox(height: 8),
               DecoratedBox(
@@ -117,9 +122,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: TextField(
                   controller: _passwordController,
                   obscureText: !_isPasswordVisible,
+                  onChanged: _validatePassword,
                   decoration: InputDecoration(
                     hintText: "********",
                     hintStyle: const TextStyle(color: Colors.grey),
+                    errorText: _passwordError,
                     suffixIcon: IconButton(
                       icon: Icon(
                         _isPasswordVisible
@@ -137,34 +144,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     fillColor: Colors.white,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(
-                        color: Colors.grey.shade400,
-                        width: 2,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(
-                        color: Colors.grey.shade400,
-                        width: 2,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                        color: Colors.transparent,
-                        width: 2,
-                      ),
+                      borderSide: BorderSide(color: Colors.grey.shade400),
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
               if (_errorMessage != null)
-                Text(
-                  _errorMessage!,
-                  style: TextStyle(color: Colors.red, fontSize: 14),
-                ),
+                Text(_errorMessage!,
+                    style: TextStyle(color: Colors.red, fontSize: 14)),
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
@@ -182,16 +170,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
-                child: const Text(
-                  "Sign in",
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
+                child: const Text("Sign in",
+                    style: TextStyle(fontSize: 18, color: Colors.white)),
               ),
               const SizedBox(height: 20),
-              const Text(
-                "— OR —",
-                style: TextStyle(color: Colors.white),
-              ),
+              const Text("— OR —", style: TextStyle(color: Colors.white)),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -228,18 +211,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
                 child: RichText(
                   text: TextSpan(
-                    style: const TextStyle(
-                      color: Colors.white,
-                    ),
+                    style: const TextStyle(color: Colors.white),
                     children: [
-                      const TextSpan(
-                        text: "Don’t have an Account? ",
-                      ),
+                      const TextSpan(text: "Don’t have an Account? "),
                       TextSpan(
                         text: "Sign up",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),

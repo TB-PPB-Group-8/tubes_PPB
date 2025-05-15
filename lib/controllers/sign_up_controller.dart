@@ -1,66 +1,70 @@
+import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class SignUpController {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   Future<void> signUp(
     BuildContext context,
     String email,
     String password,
     String confirmPassword,
     String name,
+    VoidCallback onSuccess,
+    Function(String field, String error) onValidationError,
   ) async {
-    if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
-      _showError(context, "Please fill in all fields.");
+    // Validasi email
+    if (!email.endsWith("@gmail.com")) {
+      onValidationError("email", "Email harus menggunakan @gmail.com");
       return;
     }
 
-    if (password != confirmPassword) {
-      _showError(context, "Passwords do not match.");
+    // Validasi nama
+    if (name.length < 3) {
+      onValidationError("name", "Nama minimal 3 karakter");
+      return;
+    }
+
+    // Validasi password
+    if (password.length < 6) {
+      onValidationError("password", "Password minimal 6 karakter");
+      return;
+    }
+
+    // Validasi konfirmasi password
+    if (confirmPassword != password) {
+      onValidationError("confirmPassword", "Konfirmasi password tidak cocok");
       return;
     }
 
     try {
-      // Create user with Firebase Auth
+      // Menggunakan FirebaseAuth untuk mendaftar pengguna
       UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // Save user data to Firestore
-      await _firestore.collection('user').doc(userCredential.user?.uid).set({
-        'email': email,
-        'password': password, // Ideally, hash this password before saving
-        'name': name,
-        'created_at': FieldValue.serverTimestamp(),
-      });
+      // Menambahkan nama pengguna di FirebaseAuth
+      await userCredential.user?.updateDisplayName(name);
 
-      // Show success snackbar and navigate to login screen
+      // Panggil callback sukses jika pendaftaran berhasil
+      onSuccess();
+
+      // Tampilkan SnackBar sukses
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text("Sign up berhasil"),
-          duration: const Duration(seconds: 2),
-        ),
+        const SnackBar(content: Text("Akun berhasil dibuat")),
       );
-      Future.delayed(const Duration(seconds: 2), () {
-        Navigator.pushReplacementNamed(context, '/login');
-      });
-    } catch (e) {
-      print("Error during sign up: $e");
-      _showError(context, "Sign up failed. Please try again.");
-    }
-  }
 
-  void _showError(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
-    );
+      // Navigasi ke halaman login
+      Navigator.pushReplacementNamed(context, '/login');
+    } on FirebaseAuthException catch (e) {
+      // Tangani error FirebaseAuth, misalnya email sudah terdaftar atau password lemah
+      if (e.code == 'weak-password') {
+        onValidationError("password", "Password terlalu lemah");
+      } else if (e.code == 'email-already-in-use') {
+        onValidationError("email", "Email sudah digunakan");
+      } else {
+        onValidationError("email", "Terjadi kesalahan, silakan coba lagi");
+      }
+    }
   }
 }

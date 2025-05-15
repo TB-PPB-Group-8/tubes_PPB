@@ -10,7 +10,7 @@ import 'screens/lazmall_screen.dart';
 import 'themes/app_theme.dart';
 import 'themes/theme_provider.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
