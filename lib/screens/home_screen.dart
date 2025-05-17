@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../widgets/carousel_banner.dart';
-import '../widgets/promo_section.dart';
 import '../widgets/laz_flash_section.dart';
 import '../widgets/category_grid.dart';
 import '../widgets/custom_bottom_navigation_bar.dart';
@@ -97,13 +96,9 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         children: [
           CarouselBanner(banners: banners),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           CategoryGrid(crossAxisSpacing: 7.0, mainAxisSpacing: 7.0),
-          SizedBox(height: 16.0),
-          _isLoading
-              ? Center(child: CircularProgressIndicator())
-              : PromoSection(products: _filteredProducts),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           LazFlashSection(
             isLoading: _isLoading,
             products: _filteredProducts,
@@ -114,6 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
+          const SizedBox(height: 16.0),
         ],
       ),
     );

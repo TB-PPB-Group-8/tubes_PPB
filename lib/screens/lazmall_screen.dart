@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project_lazada/widgets/header_lazmall.dart'; // Tambahkan ini
+import 'package:project_lazada/widgets/header_lazmall.dart';
 import 'package:project_lazada/widgets/navigation.dart';
 import 'package:shimmer/shimmer.dart';
 import '../widgets/product_card.dart';
@@ -45,14 +45,29 @@ class _LazMallState extends State<LazMall> {
     }
   }
 
+  int _getCrossAxisCount(double screenWidth) {
+    if (screenWidth >= 900) {
+      return 5; // tablet besar
+    } else if (screenWidth >= 600) {
+      return 3; // tablet kecil
+    } else if (screenWidth >= 400) {
+      return 2; // hp besar
+    } else {
+      return 1; // hp kecil
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final crossAxisCount = _getCrossAxisCount(screenWidth);
+
     return Scaffold(
       appBar: HeaderLazMall(
-        searchController: _searchController, 
+        searchController: _searchController,
       ),
       body: _isLoading
-          ? _buildSkeletonLoader()
+          ? _buildSkeletonLoader(screenWidth, crossAxisCount)
           : CustomScrollView(
               slivers: [
                 SliverToBoxAdapter(
@@ -62,15 +77,19 @@ class _LazMallState extends State<LazMall> {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   sliver: SliverGrid(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
+                      crossAxisCount: crossAxisCount,
                       crossAxisSpacing: 12,
                       mainAxisSpacing: 12,
-                      childAspectRatio: 0.50,
+                      childAspectRatio: 0.7,
                     ),
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         final product = _products[index];
-                        return ProductCard(product: product);
+                        return ProductCard(
+                          product: product,
+                          crossAxisCount: crossAxisCount,
+                          screenWidth: screenWidth,
+                        );
                       },
                       childCount: _products.length,
                     ),
@@ -82,17 +101,17 @@ class _LazMallState extends State<LazMall> {
     );
   }
 
-  Widget _buildSkeletonLoader() {
+  Widget _buildSkeletonLoader(double screenWidth, int crossAxisCount) {
     return CustomScrollView(
       slivers: [
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           sliver: SliverGrid(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
+              crossAxisCount: crossAxisCount,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              childAspectRatio: 0.50,
+              childAspectRatio: 0.7,
             ),
             delegate: SliverChildBuilderDelegate(
               (context, index) {
