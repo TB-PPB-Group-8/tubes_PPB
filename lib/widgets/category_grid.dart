@@ -62,11 +62,12 @@ class CategoryGrid extends StatelessWidget {
       },
     ];
 
-    
     double screenWidth = MediaQuery.of(context).size.width;
-    int crossAxisCount = 5; 
+    const double defaultMaxWidth = 430; // batas layar max untuk 5 kolom
 
-    
+    // Ubah crossAxisCount sesuai lebar layar
+    int crossAxisCount = screenWidth <= defaultMaxWidth ? 5 : 10;
+
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return GridView.builder(
@@ -74,21 +75,22 @@ class CategoryGrid extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount, 
+        crossAxisCount: crossAxisCount,
         crossAxisSpacing: crossAxisSpacing,
         mainAxisSpacing: mainAxisSpacing,
-        childAspectRatio: 1.0, 
+        childAspectRatio: 1.0,
       ),
       itemBuilder: (context, index) {
         final category = categories[index];
+        double totalSpacing = (crossAxisCount - 1) * crossAxisSpacing;
+        double itemWidth = (screenWidth - totalSpacing) / crossAxisCount;
+
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: screenWidth /
-                  crossAxisCount *
-                  0.7, 
-              height: screenWidth / crossAxisCount * 0.7,
+              width: itemWidth * 0.7,
+              height: itemWidth * 0.7,
               padding: category.containsKey('borderColor')
                   ? const EdgeInsets.all(4)
                   : EdgeInsets.zero,
@@ -103,22 +105,20 @@ class CategoryGrid extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Image.asset(
-                category['image']!,
+                category['image'],
                 fit: BoxFit.contain,
               ),
             ),
             const SizedBox(height: 4),
             SizedBox(
-              width: screenWidth /
-                  crossAxisCount *
-                  0.8, 
+              width: itemWidth * 0.8,
               child: Text(
-                category['label']!,
+                category['label'],
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: 10, 
+                  fontSize: 10,
                   color: isDarkMode ? Colors.white : Colors.black,
                 ),
               ),

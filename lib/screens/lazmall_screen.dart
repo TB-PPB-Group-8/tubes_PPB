@@ -45,92 +45,117 @@ class _LazMallState extends State<LazMall> {
     }
   }
 
-  int _getCrossAxisCount(double screenWidth) {
-    if (screenWidth >= 900) {
-      return 5; // tablet besar
-    } else if (screenWidth >= 600) {
-      return 3; // tablet kecil
-    } else if (screenWidth >= 400) {
-      return 2; // hp besar
-    } else {
-      return 1; // hp kecil
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final crossAxisCount = _getCrossAxisCount(screenWidth);
-
     return Scaffold(
       appBar: HeaderLazMall(
         searchController: _searchController,
       ),
       body: _isLoading
-          ? _buildSkeletonLoader(screenWidth, crossAxisCount)
-          : CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: CarouselBanner(banners: banners),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  sliver: SliverGrid(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: 0.7,
+          ? _buildSkeletonLoader()
+          : LayoutBuilder(
+              builder: (context, constraints) {
+                // Hitung jumlah kolom berdasar lebar container, minimal 2 kolom
+                int crossAxisCount = constraints.maxWidth ~/ 180;
+                if (crossAxisCount < 2) crossAxisCount = 2;
+
+                // Hitung lebar card (kurangi padding & spacing)
+                double totalHorizontalPadding =
+                    16 * 2 + (crossAxisCount - 1) * 10;
+                double cardWidth =
+                    (constraints.maxWidth - totalHorizontalPadding) /
+                        crossAxisCount;
+
+                return CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: CarouselBanner(banners: banners),
                     ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final product = _products[index];
-                        return ProductCard(
-                          product: product,
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      sliver: SliverGrid(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: crossAxisCount,
-                          screenWidth: screenWidth,
-                        );
-                      },
-                      childCount: _products.length,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio:
+                              cardWidth / (cardWidth * 4 / 3), // rasio 3:4
+                        ),
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final product = _products[index];
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? const Color(0xFF1E1E1E)
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 8,
+                                    spreadRadius: 2,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: ProductCard(
+                                product: product,
+                                crossAxisCount: crossAxisCount,
+                                screenWidth: constraints.maxWidth,
+                              ),
+                            );
+                          },
+                          childCount: _products.length,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ],
+                  ],
+                );
+              },
             ),
       bottomNavigationBar: CustomBottomNavigationBarLazMall(),
     );
   }
 
-  Widget _buildSkeletonLoader(double screenWidth, int crossAxisCount) {
-    return CustomScrollView(
-      slivers: [
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          sliver: SliverGrid(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 0.7,
+  Widget _buildSkeletonLoader() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        int crossAxisCount = constraints.maxWidth ~/ 180;
+        if (crossAxisCount < 2) crossAxisCount = 2;
+
+        return CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              sliver: SliverGrid(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 0.75,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    );
+                  },
+                  childCount: 12,
+                ),
+              ),
             ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return Shimmer.fromColors(
-                  baseColor: Colors.grey[300]!,
-                  highlightColor: Colors.grey[100]!,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                );
-              },
-              childCount: 12,
-            ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 }
