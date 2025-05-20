@@ -13,7 +13,7 @@ class LoginController {
 
     if (email.isEmpty || password.isEmpty) {
       Fluttertoast.showToast(
-        msg: "Email dan Password tidak boleh kosong.",
+        msg: "Email dan Password tidak boleh kosong!",
         backgroundColor: Colors.red,
         textColor: Colors.white,
       );
@@ -50,19 +50,19 @@ class LoginController {
       print('FirebaseAuthException: code=${e.code}, message=${e.message}');
       if (e.code == 'user-not-found') {
         Fluttertoast.showToast(
-          msg: "Email tidak terdaftar.",
+          msg: "Email tidak terdaftar!",
           backgroundColor: Colors.red,
           textColor: Colors.white,
         );
       } else if (e.code == 'wrong-password') {
         Fluttertoast.showToast(
-          msg: "Password salah.",
+          msg: "Password salah!",
           backgroundColor: Colors.red,
           textColor: Colors.white,
         );
       } else {
         Fluttertoast.showToast(
-          msg: "Terjadi kesalahan, silakan coba lagi.",
+          msg: "Akun tidak ditemukan!",
           backgroundColor: Colors.red,
           textColor: Colors.white,
         );

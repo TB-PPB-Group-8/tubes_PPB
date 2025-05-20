@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class SignUpController {
   Future<void> signUp(
@@ -12,50 +11,66 @@ class SignUpController {
     VoidCallback onSuccess,
     Function(String field, String error) onValidationError,
   ) async {
-    if (!email.endsWith("@gmail.com")) {
-      onValidationError("email", "Email harus menggunakan @gmail.com");
+    // Validasi email
+    if (!email.endsWith("@")) {
+      onValidationError("email", "Email harus menggunakan @");
       return;
     }
+
+    // Validasi nama
     if (name.length < 3) {
       onValidationError("name", "Nama minimal 3 karakter");
       return;
     }
+
+    // Validasi password
     if (password.length < 6) {
       onValidationError("password", "Password minimal 6 karakter");
       return;
     }
+
+    // Validasi konfirmasi password
     if (confirmPassword != password) {
       onValidationError("confirmPassword", "Konfirmasi password tidak cocok");
       return;
     }
 
     try {
+      // Cek apakah email sudah terdaftar
+      final signUpResult = await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+      if (signUpResult.isNotEmpty) {
+        onValidationError("email", "Email sudah digunakan!");
+        return;
+      }
+
+      // Jika tidak ada error, lanjutkan proses pendaftaran
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
+      // Menambahkan nama pengguna di FirebaseAuth
       await userCredential.user?.updateDisplayName(name);
 
+      // Panggil callback sukses jika pendaftaran berhasil
       onSuccess();
 
-      Fluttertoast.showToast(
-        msg: "Akun berhasil dibuat",
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        gravity: ToastGravity.BOTTOM,
-        toastLength: Toast.LENGTH_SHORT,
+      // Tampilkan SnackBar sukses
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Akun berhasil dibuat")),
       );
 
+      // Navigasi ke halaman login
       Navigator.pushReplacementNamed(context, '/login');
     } on FirebaseAuthException catch (e) {
+      // Tangani error FirebaseAuth, misalnya email sudah terdaftar atau password lemah
       if (e.code == 'weak-password') {
-        onValidationError("password", "Password terlalu lemah");
+        onValidationError("password", "Password terlalu lemah!");
       } else if (e.code == 'email-already-in-use') {
-        onValidationError("email", "Email sudah digunakan");
+        onValidationError("email", "Email sudah digunakan!");
       } else {
-        onValidationError("email", "Terjadi kesalahan, silakan coba lagi");
+        onValidationError("email", "Akun ini sudah terdaftar!");
       }
     }
   }

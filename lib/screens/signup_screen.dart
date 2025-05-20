@@ -40,8 +40,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     setState(() {
       if (field == "email") {
         _emailTouched = true;
-        _emailError =
-            value.endsWith("@gmail.com") ? null : "format email tidak valid";
+        _emailError = value.endsWith("@") ? null : "format email tidak valid";
       }
       if (field == "name") {
         _nameTouched = true;
