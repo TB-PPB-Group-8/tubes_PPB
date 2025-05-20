@@ -15,7 +15,7 @@ class HeaderWithIcons extends StatefulWidget implements PreferredSizeWidget {
   _HeaderWithIconsState createState() => _HeaderWithIconsState();
 
   @override
-  Size get preferredSize => Size.fromHeight(60);
+  Size get preferredSize => const Size.fromHeight(60);
 }
 
 class _HeaderWithIconsState extends State<HeaderWithIcons> {
@@ -49,7 +49,7 @@ class _HeaderWithIconsState extends State<HeaderWithIcons> {
           Expanded(
             child: Container(
               height: 40,
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: searchBoxColor,
                 borderRadius: BorderRadius.circular(20),
@@ -68,6 +68,10 @@ class _HeaderWithIconsState extends State<HeaderWithIcons> {
                     size: 20,
                   ),
                   border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  filled: false,
+                  contentPadding: EdgeInsets.symmetric(vertical: 10),
                 ),
                 style: TextStyle(
                   color: textColor,
