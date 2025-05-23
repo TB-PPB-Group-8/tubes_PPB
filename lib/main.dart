@@ -29,9 +29,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Lazada Clone',
-      theme: AppTheme.lightTheme, // Tema terang
-      darkTheme: AppTheme.darkTheme, // Tema gelap
-      themeMode: themeProvider.themeMode, // Mode tema (light/dark)
+      theme: AppTheme.lightTheme, 
+      darkTheme: AppTheme.darkTheme, 
+      themeMode: themeProvider.themeMode, 
       initialRoute: '/',
       routes: {
         '/': (context) => SplashScreen(),

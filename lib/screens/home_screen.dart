@@ -23,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> _products = [];
   List<dynamic> _filteredProducts = [];
   bool _isLoading = true;
+  bool _isSearchEmpty = false;
 
   final List<String> banners = [
     'assets/images/banner1.png',
@@ -60,6 +61,13 @@ class _HomeScreenState extends State<HomeScreen> {
         final productTitle = product['title'].toLowerCase();
         return productTitle.contains(query.toLowerCase());
       }).toList();
+
+      // Cek apakah hasil pencarian kosong atau tidak
+      if (_filteredProducts.isEmpty) {
+        _isSearchEmpty = true;
+      } else {
+        _isSearchEmpty = false;
+      }
     });
   }
 
@@ -70,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: HeaderWithIcons(
         themeProvider: themeProvider,
-        onSearch: _handleSearch,
+        onSearch: _handleSearch, // Menangani pencarian
       ),
       body: _screens[_currentIndex],
       bottomNavigationBar: CustomBottomNavigationBar(
@@ -95,20 +103,30 @@ class _HomeScreenState extends State<HomeScreen> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          CarouselBanner(banners: banners),
+          if (_isSearchEmpty)
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                "Produk tidak ditemukan",
+                style: TextStyle(color: Colors.red, fontSize: 16),
+              ),
+            ),
+          if (!_isSearchEmpty) CarouselBanner(banners: banners),
+          if (!_isSearchEmpty) const SizedBox(height: 16.0),
+          if (!_isSearchEmpty)
+            CategoryGrid(crossAxisSpacing: 7.0, mainAxisSpacing: 7.0),
           const SizedBox(height: 16.0),
-          CategoryGrid(crossAxisSpacing: 7.0, mainAxisSpacing: 7.0),
-          const SizedBox(height: 16.0),
-          LazFlashSection(
-            isLoading: _isLoading,
-            products: _filteredProducts,
-            onMorePressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LazMall()),
-              );
-            },
-          ),
+          if (!_isSearchEmpty)
+            LazFlashSection(
+              isLoading: _isLoading,
+              products: _filteredProducts,
+              onMorePressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LazMall()),
+                );
+              },
+            ),
           const SizedBox(height: 16.0),
         ],
       ),
