@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../controllers/cart_controller.dart';
 import 'package:intl/intl.dart';
 
 class ProductCard extends StatelessWidget {
-  final Map<String, dynamic>? product;
+  final Map<String, dynamic> product;
   final int crossAxisCount;
   final double screenWidth;
 
@@ -22,9 +24,8 @@ class ProductCard extends StatelessWidget {
     final double imageHeight = cardWidth * 0.75;
 
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final String formattedPrice = product != null
-        ? '\$${NumberFormat("#,##0.00", "en_US").format(product!['price'])}'
-        : 'Unknown Price';
+    final String formattedPrice =
+        '\$${NumberFormat("#,##0.00", "en_US").format(product['price'])}';
 
     return Container(
       decoration: BoxDecoration(
@@ -44,42 +45,28 @@ class ProductCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (product != null)
-                ClipRRect(
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(10)),
-                  child: Container(
-                    height: imageHeight,
-                    width: cardWidth,
-                    color: Colors.white,
-                    child: Image.network(
-                      product!['image'],
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const Icon(Icons.broken_image, size: 40),
-                    ),
-                  ),
-                )
-              else
-                Container(
+              ClipRRect(
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(10)),
+                child: Container(
                   height: imageHeight,
                   width: cardWidth,
                   color: Colors.white,
-                  child: Icon(
-                    Icons.image,
-                    size: 50,
-                    color: isDarkMode
-                        ? Colors.grey.shade600
-                        : Colors.grey.shade700,
+                  child: Image.network(
+                    product['image'],
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.broken_image, size: 40),
                   ),
                 ),
+              ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      product?['title'] ?? 'Unknown Product',
+                      product['title'],
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -107,6 +94,8 @@ class ProductCard extends StatelessWidget {
             right: 8,
             child: IconButton(
               onPressed: () {
+                // Tambahkan produk ke keranjang
+                context.read<CartController>().addItemToCart(product);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Added to Cart!')),
                 );

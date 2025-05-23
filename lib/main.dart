@@ -9,13 +9,17 @@ import 'screens/home_screen.dart';
 import 'screens/lazmall_screen.dart';
 import 'themes/app_theme.dart';
 import 'themes/theme_provider.dart';
+import 'controllers/cart_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CartController()), 
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ],
       child: MyApp(),
     ),
   );
