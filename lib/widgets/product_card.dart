@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../controllers/cart_controller.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:intl/intl.dart';
+import '../controllers/cart_controller.dart';
 
 class ProductCard extends StatelessWidget {
   final Map<String, dynamic> product;
@@ -14,6 +15,34 @@ class ProductCard extends StatelessWidget {
     required this.screenWidth,
     Key? key,
   }) : super(key: key);
+
+  void showAddedToCartFlushbar(BuildContext context) {
+    Flushbar(
+      message: "Added to Cart!",
+      duration: Duration(seconds: 2),
+      flushbarPosition: FlushbarPosition.TOP,
+      backgroundGradient: LinearGradient(
+        colors: [Colors.orange.shade700, Colors.pink.shade500],
+      ),
+      boxShadows: [
+        BoxShadow(
+          color: Colors.black45,
+          offset: Offset(0, 3),
+          blurRadius: 3,
+        )
+      ],
+      borderRadius: BorderRadius.circular(12),
+      margin: EdgeInsets.all(10),
+      animationDuration: Duration(milliseconds: 500),
+      icon: Icon(
+        Icons.shopping_cart,
+        color: Colors.white,
+      ),
+      forwardAnimationCurve: Curves.easeOut,
+      reverseAnimationCurve: Curves.easeIn,
+      flushbarStyle: FlushbarStyle.FLOATING,
+    ).show(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,11 +123,8 @@ class ProductCard extends StatelessWidget {
             right: 8,
             child: IconButton(
               onPressed: () {
-                // Tambahkan produk ke keranjang
-                context.read<CartController>().addItemToCart(product);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Added to Cart!')),
-                );
+                context.read<CartController>().addItem(product);
+                showAddedToCartFlushbar(context);
               },
               icon: Icon(
                 Icons.shopping_cart,

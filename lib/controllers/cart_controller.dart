@@ -1,32 +1,48 @@
 import 'package:flutter/material.dart';
-import '../models/cart_model.dart';
+
+class CartItem {
+  final Map<String, dynamic> product;
+  int quantity;
+
+  CartItem({required this.product, this.quantity = 1});
+}
 
 class CartController extends ChangeNotifier {
   List<CartItem> _cartItems = [];
 
   List<CartItem> get cartItems => _cartItems;
 
-  void addItemToCart(Map<String, dynamic> product) {
-    _cartItems.add(CartItem(product: product));
+  void addItem(Map<String, dynamic> product) {
+    final index =
+        _cartItems.indexWhere((item) => item.product['id'] == product['id']);
+    if (index != -1) {
+      _cartItems[index].quantity++;
+    } else {
+      _cartItems.add(CartItem(product: product));
+    }
     notifyListeners();
   }
 
-  void removeItemFromCart(int index) {
-    _cartItems.removeAt(index);
-    notifyListeners();
+  void removeItem(int index) {
+    if (index >= 0 && index < _cartItems.length) {
+      _cartItems.removeAt(index);
+      notifyListeners();
+    }
   }
 
   void increaseItemQuantity(int index) {
-    _cartItems[index].increaseQuantity();
-    notifyListeners();
+    if (index >= 0 && index < _cartItems.length) {
+      _cartItems[index].quantity++;
+      notifyListeners();
+    }
   }
 
   void decreaseItemQuantity(int index) {
-    _cartItems[index].decreaseQuantity();
-    notifyListeners();
-  }
-
-  double get totalPrice {
-    return _cartItems.fold(0, (total, item) => total + item.totalPrice);
+    if (index >= 0 && index < _cartItems.length) {
+      if (_cartItems[index].quantity > 1) {
+        _cartItems[index].quantity--;
+        notifyListeners();
+      }
+    }
   }
 }
