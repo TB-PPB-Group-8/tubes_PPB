@@ -184,22 +184,28 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {
-                        final selectedIndices = selectedItems.entries
-                            .where((e) => e.value)
-                            .map((e) => e.key)
-                            .toList();
-                        if (selectedIndices.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text('Pilih barang terlebih dahulu')),
-                          );
-                          return;
-                        }
-                        // TODO: proses beli barang terpilih
-                      },
+                      onPressed: selectedItems.values.any((v) => v)
+                          ? () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text('Sukses'),
+                                  content: Text('Barang berhasil dibeli'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                      child: Text('OK'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepOrange,
+                        backgroundColor: selectedItems.values.any((v) => v)
+                            ? Colors.deepOrange
+                            : Colors.grey,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 30, vertical: 12),
                         shape: RoundedRectangleBorder(
